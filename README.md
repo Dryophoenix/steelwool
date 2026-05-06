@@ -55,7 +55,7 @@ is generated temporarily whenever `SteelWoolDiff` runs, before turning into
 
 ### Data and Config
   "steelwool config.toml"
-`$HOME/Library/Application\ Support/SteelWool/config.toml
+`$HOME/Library/Application\ Support/SteelWool/config.toml`
 
   "chromebefore.txt, chromeafter.txt, targets.txt"
 `$HOME/Library/Application\ Support/SteelWool`
