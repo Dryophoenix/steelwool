@@ -18,11 +18,6 @@ PATCH_VERSION=0
 #
 # - Dryophoenix (Neph Hillis)
 
-# ANSI color codes
-ANSI_RED='\033[0;31m'
-ANSI_YELLOW='\033[0;33m'
-ANSI_RESET='\033[0m'
-
 # Please do not give this program root.
 
 if [ "$(id -u)" -eq 0 ]; then
@@ -32,12 +27,22 @@ fi
 
 # --- BEGIN VARIABLE CHECKING AND DECLARATION ---
 
-# - begin case processing and initial state -
+# source libsteelwool, and handle errors and unexpecteds.
+{
+  source /usr/local/share/SteelWool/libsteelwool.sh \
+    || { printf "%s\n" "libsteelwool wasn't in its expected location, defaulting to scripts folder..." >&2
+         source "$(dirname "$0")/libsteelwool.sh"; }
+} || {
+  printf "%s\n" "libsteelwool.sh could not be found. Is it in the right place?" >&2
+  exit 1
+}
 
-# Here, 1 is truthy, 0 is falsy.
-IS_VERBOSE=0
-IS_LOGGING=0
-IS_DRY=0
+assure_directories || {
+  printf "%s\n" "assure_directories failed. Check permissions on ~/Library." >&2
+  exit 1
+}
+
+# - begin case processing and initial state -
 
 while [ "$#" -gt 0 ]; do
   case $1 in
@@ -63,80 +68,6 @@ while [ "$#" -gt 0 ]; do
     ;;
   esac
 done
-
-# - begin flagger function declarations -
-
-logging() {
-  [ "$IS_LOGGING" -eq 1 ]
-}
-
-verbose() {
-  [ "$IS_VERBOSE" -eq 1 ]
-}
-
-dry() {
-  [ "$IS_DRY" -eq 1 ]
-}
-
-# Generate the x directory. If the x directory doesn't exist, then generate it.
-
-# x = log
-if [ ! -d "$HOME/Library/Logs/SteelWool" ]; then
-  mkdir "$HOME/Library/Logs/SteelWool"
-fi
-
-# x = data; config
-if [ ! -d "$HOME/Library/Application Support/SteelWool" ]; then
-  mkdir "$HOME/Library/Application Support/SteelWool"
-fi
-
-# Create the x file in the x directory.
-
-# x = log
-if [ -e "$HOME/Library/Logs/SteelWool" ]; then
-  logfile="$HOME/Library/Logs/SteelWool/steelwool.log"
-  IS_LOGGING=1;
-else
-  printf "%s\n" "The log file for steelwool cannot be created, turning logging off" >&2
-  IS_LOGGING=0;
-fi
-
-# x = data; config
-if [ -e "$HOME/Library/Application Support/SteelWool" ]; then
-  datadir="$HOME/Library/Application Support/SteelWool"
-  configfile="$HOME/Library/Application Support/SteelWool/config.toml"
-fi
-
-# Since verbose means to tee the log into stdout, a few functions to simplify
-# logging outright could be made.
-logstd() {
-  timestamp=$(date "+%Y-%m-%d %H:%M:%S")
-  if verbose; then
-    printf "%s\n" "$1"
-  fi
-
-  if logging; then
-    printf "%s %s\n" "$timestamp" "$1" >> "$logfile"
-  fi
-}
-
-logwarn() {
-  timestamp=$(date "+%Y-%m-%d %H:%M:%S")
-  printf "${ANSI_YELLOW}[WARN] %s${ANSI_RESET}\n" "$1" >&2
-
-  if logging; then
-    printf "%s [WARN] %s\n" "$timestamp" "$1" >> "$logfile"
-  fi
-}
-
-logerr() {
-  timestamp=$(date "+%Y-%m-%d %H:%M:%S")
-  printf "${ANSI_RED}[ERROR] %s${ANSI_RESET}\n" "$1" >&2;
-
-  if logging; then
-    printf "%s [ERROR] %s\n" "$timestamp" "$1" >> "$logfile"
-  fi
-}
 
 # SteelWool needs to determine and delete the Chrome log folders.
 
