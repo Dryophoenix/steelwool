@@ -1,9 +1,5 @@
 #!/bin/zsh
 
-MAJOR_VERSION=1
-MINOR_VERSION=0
-PATCH_VERSION=0
-
 # SteelWool is a tool meant to "clean chrome". Jokes aside, it
 # exists to solve a problem where students on a shared user account
 # remained logged into Chrome for extended periods of time.

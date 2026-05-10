@@ -74,7 +74,7 @@ logstd() {
   fi
 
   if logging; then
-    printf "%s %s\n" "$timestamp" "$1" >>"$logfile"
+    printf "%s %s\n" "$timestamp" "$1" >>"$logdir/steelwool.log"
   fi
 }
 
@@ -83,7 +83,7 @@ logwarn() {
   printf "${ANSI_YELLOW}[WARN] %s${ANSI_RESET}\n" "$1" >&2
 
   if logging; then
-    printf "%s [WARN] %s\n" "$timestamp" "$1" >>"$logfile"
+    printf "%s [WARN] %s\n" "$timestamp" "$1" >>"$logdir/steelwool.log"
   fi
 }
 

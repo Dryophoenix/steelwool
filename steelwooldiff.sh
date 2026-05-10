@@ -1,9 +1,5 @@
 #!/bin/zsh
 
-MAJOR_VERSION=1
-MINOR_VERSION=0
-PATCH_VERSION=0
-
 # SteelWoolDiff is a tool that's meant to generate a "targets.txt"
 # file with a checksum so that may presumably be legitimate.
 
@@ -56,8 +52,7 @@ assure_directories || {
 
 while [ true ]; do
   rm "$datadir/chromebefore.txt" >/dev/null
-  find "*/google" >> "$datadir/chromebefore.txt"
-  find "*/Google" >> "$datadir/chromebefore.txt"
+  find "$HOME/Library/Application Support/Google/Chrome" >> "$datadir/chromebefore.txt"
   
   while [ true ]; do
     read -p "Log into Chrome, then press Enter. (C)ancel: " response
@@ -78,10 +73,9 @@ while [ true ]; do
   done
 
   rm "$datadir/chromeafter.txt" >/dev/null
-  find "*/google" >> "$datadir/chromeafter.txt"
-  find "*/Google" >> "$datadir/chromeafter.txt"
+  find "$HOME/Library/Application Support/Google/Chrome" >> "$datadir/chromeafter.txt"
 
-  if [ $(wc -l < "$datadir/chromeafter.txt") -gt $((10 + $(wc -l < "$datadir/chromebefore.txt"))) ]; then
+  if [ $(wc -l < "$datadir/chromeafter.txt") -gt $((${DIFF_SENSITIVITY:-10} + $(wc -l < "$datadir/chromebefore.txt"))) ]; then
     break
   else
     while [ true ]; do
