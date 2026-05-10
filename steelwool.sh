@@ -75,7 +75,7 @@ done
 # 
 # Since these are "magic files", a further explanation is required.
 #
-# They are discovered on a MacOS Sequoia VM via UTM.
+# They are discovered on a MacOS VM running Sequoia, using steelwooldiff.sh.
 #
 # The process was: 
 # 1) download Chrome, initialize Chrome, quit.

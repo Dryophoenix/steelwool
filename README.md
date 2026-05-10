@@ -17,7 +17,7 @@ cleans chrome
 
 ## Installation
 
-  Brew or Curl, currently TODO.
+  In progress
 
 ## How it works
 
@@ -30,6 +30,14 @@ cleans chrome
   This, of course, relies on an initial targets.txt to work. This itself is generated on a MacOS Sequoia VM that takes the initial state of Chrome, the state after a user is logged in, and differentiates to see what files are different between them. 
 
   This is updated with every patch as targets.txt, which is downloadable [standalone](example.com) or with `brew upgrade steelwool`.It generally only changes when Chrome releases a major update, since Chrome is rather stable.
+
+## Maintainers
+
+  Generally, I should be the only one modifying targets.txt, at least until a better solution for making sure that it is completely secure can be found. Because of the nature of SteelWool, anything that is put in targets.txt will be removed. This may include arbitrary files inserted into SteelWool, since SteelWoolDiff cannot be updated before run. Essentially, the tool requires a central database of targets, which must be protected from modification.
+
+  Otherwise, I would love any contribution to the project if you find it helpful! Better versions of some of the functions could be appreciated, better documentation could be nice, expansion would be awesome, as long as it maintains its initial purpose to "clean chrome".
+
+  Ideally, Google someday makes SteelWool irrelevant, but as long as Chrome wants to hold onto data, this tool exists instead.
 
 ### Definitions
 

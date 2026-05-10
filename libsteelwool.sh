@@ -51,7 +51,7 @@ assure_directories() {
 
   # x = log
   if [ -e "$HOME/Library/Logs/SteelWool" ]; then
-    logfile="$HOME/Library/Logs/SteelWool/steelwool.log"
+    logdir="$HOME/Library/Logs/SteelWool"
     IS_LOGGING=1
   else
     printf "%s\n" "The log file for steelwool cannot be created, turning logging off" >&2
