@@ -92,6 +92,20 @@ if [ ! -e "$datadir/targets.txt" ]; then
   exit 1
 fi
 
+# Fetch the canonical checksum of targets.txt from GitHub (no token needed on public repo)
+remotesum=$(curl -s \
+      -H "Accept: application/vnd.github+json" \
+      https://api.github.com/repos/dryophoenix/steelwool/contents/targets.sha256 \
+  | jq -r '.content' | base64 --decode | awk '{print $1}')
+
+# Compute checksum of local targets.txt
+localsum=$(shasum -a 256 "$datadir/targets.txt" | awk '{print $1}')
+
+if [ "$localsum" != "$remotesum" ]; then
+  printf "%s\n" "The targets file appears to be modified, outdated, or corrupted. Quitting."
+  exit 1
+fi
+
 while IFS= read -r target; do
     if [ -e "$target" ]; then
         if dry; then

@@ -50,6 +50,17 @@ assure_directories || {
   exit 1
 }
 
+if [ ! -f "$HOME/Library/Application Support/SteelWool/token" ]; then
+  printf "%s\n" "SteelWoolDiff requires a Github token at $HOME/Library/Application Support/SteelWool/token. Exiting."
+  exit 1
+fi
+
+if [ ! -d "$HOME/Library/Application Support/SteelWool/contents" ]; then
+  mkdir "$HOME/Library/Application Support/SteelWool/contents"
+fi
+
+token=$(cat "$HOME/Library/Application Support/SteelWool/token")
+
 while [ true ]; do
   rm "$datadir/chromebefore.txt" >/dev/null
   find "$HOME/Library/Application Support/Google/Chrome" >> "$datadir/chromebefore.txt"
@@ -101,4 +112,53 @@ while [ true ]; do
   fi
 done
 
-diff "$datadir/chromeafter.txt" "$datadir/chromebefore.txt" > "$datadir/targets.txt"
+diff "$datadir/chromeafter.txt" "$datadir/chromebefore.txt" > "$datadir/contents/targets.txt"
+
+# Compute SHA-256 of this script and compare against the canonical checksum on GitHub.
+# This ensures only an unmodified, trusted version of steelwooldiff can push targets.
+checksum=$(shasum -a 256 "$0" | awk '{print $1}')
+
+diffsha=$(curl -s \
+      -H "Authorization: Bearer $token" \
+      -H "Accept: application/vnd.github+json" \
+      https://api.github.com/repos/dryophoenix/steelwool/contents/steelwooldiff.sha256 \
+  | jq -r '.content' | base64 --decode | awk '{print $1}')
+
+if [ "$checksum" != "$diffsha" ]; then
+  printf "%s\n" "You are using a modified, outdated, or corrupted version of SteelWoolDiff. Quitting."
+  exit 1
+fi
+
+# Compute checksum of targets.txt and write it to targets.sha256
+targsum=$(shasum -a 256 "$datadir/contents/targets.txt" | awk '{print $1}')
+printf "%s\n" "$targsum" > "$datadir/contents/targets.sha256"
+
+# Get the sha file from git
+targsha=$(curl -s \
+      -H "Authorization: Bearer $token" \
+      -H "Accept: application/vnd.github+json" \
+      https://api.github.com/repos/dryophoenix/steelwool/contents/targets.sha256 \
+  | jq -r '.sha')
+
+targtxtsha=$(curl -s \
+      -H "Authorization: Bearer $token" \
+      -H "Accept: application/vnd.github+json" \
+      https://api.github.com/repos/dryophoenix/steelwool/contents/targets.txt \
+  | jq -r '.sha')
+
+# Base64-encode the files so github can recieve them
+contargsum=$(base64 < "$datadir/contents/targets.sha256")
+contarg=$(base64 < "$datadir/contents/targets.txt")
+
+# put the files in github
+curl -s -X PUT \
+     -H "Authorization: Bearer $token" \
+     -H "Accept: application/vnd.github+json" \
+     -d "{\"message\":\"update targets checksum\",\"content\":\"$contargsum\",\"sha\":\"$targsha\"}" \
+     https://api.github.com/repos/dryophoenix/steelwool/contents/targets.sha256
+
+curl -s -X PUT \
+     -H "Authorization: Bearer $token" \
+     -H "Accept: application/vnd.github+json" \
+     -d "{\"message\":\"update targets.txt\",\"content\":\"$contarg\",\"sha\":\"$targtxtsha\"}" \
+     https://api.github.com/repos/dryophoenix/steelwool/contents/targets.txt

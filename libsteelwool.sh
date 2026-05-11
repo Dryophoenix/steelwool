@@ -61,7 +61,7 @@ assure_directories() {
   # x = data; config
   if [ -e "$HOME/Library/Application Support/SteelWool" ]; then
     datadir="$HOME/Library/Application Support/SteelWool"
-    configfile="$HOME/Library/Application Support/SteelWool/config.toml"
+    configfile="$HOME/Library/Application Support/SteelWool/config.conf"
   fi
 }
 
@@ -92,6 +92,6 @@ logerr() {
   printf "${ANSI_RED}[ERROR] %s${ANSI_RESET}\n" "$1" >&2
 
   if logging; then
-    printf "%s [ERROR] %s\n" "$timestamp" "$1" >>"$logfile"
+    printf "%s [ERROR] %s\n" "$timestamp" "$1" >>"$logdir/steelwool.log"
   fi
 }
