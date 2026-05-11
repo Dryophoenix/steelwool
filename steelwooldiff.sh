@@ -66,7 +66,7 @@ while [ true ]; do
   find "$HOME/Library/Application Support/Google/Chrome" >> "$datadir/chromebefore.txt"
   
   while [ true ]; do
-    read -p "Log into Chrome, then press Enter. (C)ancel: " response
+    read "response?Log into Chrome, then press Enter. (C)ancel: "
     case $response in
       C|c)
         rm "$datadir/chromebefore.txt" \
@@ -90,17 +90,18 @@ while [ true ]; do
     break
   else
     while [ true ]; do
-      read -p "There are fewer new lines than would be expected, did you log in? (y/n/(c)ancel): " response
-      case $response in 
+      read "response?There are fewer new lines than would be expected, did you log in? (y/n/(c)ancel): "
+      case $response in
       y | Y | yes | Yes)
         printf "%s\n" "Okay, running diff."
+        FORCE_DIFF=1
         break
         ;;
       n | N | no | No)
         printf "%s\n" "Okay, log in."
         continue
         ;;
-      c | C | cancel | Cancel) 
+      c | C | cancel | Cancel)
         printf "%s\n" "Okay, cancelling diff and exiting."
         exit 1
         ;;
@@ -109,6 +110,9 @@ while [ true ]; do
         ;;
       esac
     done
+    if [ "${FORCE_DIFF:-0}" -eq 1 ]; then
+      break
+    fi
   fi
 done
 
