@@ -17,7 +17,19 @@ cleans chrome
 
 ## Installation
 
-  In progress
+  To install SteelWool:
+  sudo zsh <(curl -sL https://raw.githubusercontent.com/dryophoenix/steelwool/main/install.sh)
+
+  It must be run as root to install to /usr/local/bin and /usr/local/share. 
+
+  1) This script checks if jq is installed, and if it's not, installs it. 
+  2) This script installs steelwool.sh to /usr/local/bin;
+  3) This script installs libsteelwool.sh to /usr/local/share/SteelWool;
+  4) It runs a checksum on targets.txt;
+  5) It places a heredoc plist at $HOME/Library/LaunchAgents/net.dryophoenix.steelwool.plist;
+  6) and runs it with Launchctl.
+
+  If you want the dev tools like libsteelwool, clone this repo.
 
 ## How it works
 
@@ -29,7 +41,7 @@ cleans chrome
 
   This, of course, relies on an initial targets.txt to work. This itself is generated on a MacOS Sequoia VM that takes the initial state of Chrome, the state after a user is logged in, and differentiates to see what files are different between them. 
 
-  This is updated with every patch as targets.txt, which is downloadable [standalone](example.com) or with `brew upgrade steelwool`.It generally only changes when Chrome releases a major update, since Chrome is rather stable.
+  This is updated with every patch as targets.txt, which is downloadable standalone from github or with the curl install script. It generally only changes when Chrome releases a major update, since Chrome is rather stable.
 
 ## Maintainers
 
