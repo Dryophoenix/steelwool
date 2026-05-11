@@ -72,4 +72,4 @@ is generated temporarily whenever `SteelWoolDiff` runs, before turning into
 
 Dryophoenix (Neph Hillis)
 
-dryophoenix@outlook.com - Contact me!
+dryo@dryophoenix.net - Contact me!
